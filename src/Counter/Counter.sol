@@ -3,6 +3,8 @@ pragma solidity ^0.8.4;
 
 contract Counter {
     int256 private count = 0;
+    event Reset(string msg);
+    event Failure(string);
 
     function incrementCounter() public {
         count += 1;
@@ -10,11 +12,16 @@ contract Counter {
 
     function resetCounter() public {
         count = 0;
-
-        // todo: emit an event here that tells us the counter has been reset
+        emit Reset("Count was reset");
     }
 
-    // todo: add a method that can change the value of the counter to anything between 0 and 100 (fail the transaction if the value is outside of these bounds)
+    function setCounter(int256 newCount) public {
+        if (newCount > 100 || newCount < 0) {
+            emit Failure("Count is out of bounds");
+        } else {
+            count = newCount;
+        }
+    }
 
     function getCount() public view returns (int256) {
         return count;
