@@ -5,7 +5,7 @@ import abi from './utils/Counter.json';
 
 function App() {
   const [currentAccount, setCurrentAccount] = useState('');
-  const [count, setCount] = useState(0);
+  const [count, setCount] = useState(-1);
   const contractAddress = '0xa9d89d4263d44d93af1ee0ed67a970a3338b9c81';
   const contractABI = abi.abi;
 
@@ -52,26 +52,49 @@ function App() {
     }
   };
 
+  const getCounterValue = async () => {
+    try {
+      const {ethereum} = window;
+
+      if (ethereum) {
+        const provider = new ethers.providers.Web3Provider(ethereum);
+        const signer = provider.getSigner();
+        const counterContract = new ethers.Contract(contractAddress, contractABI, signer);
+
+        const updatedCount = await counterContract.getCount();
+        setCount(updatedCount.toNumber());
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
     checkIfWalletIsConnected();
   }, []);
 
   return (
     <div className="App">
-      <header className="App-header">
-        <p>Counter Contract</p>
-      </header>
+      <p>Counter Contract</p>
       {!currentAccount && (
-        <button className="waveButton" onClick={connectWallet}>
+        <button className="connect-wallet-button" onClick={connectWallet}>
           Connect Wallet
         </button>
       )}
       {currentAccount && (
-        <button className="incrementButton" onClick={increment}>
+        <button className="increment-button" onClick={getCounterValue}>
+          get counter value
+        </button>
+      )}
+      {currentAccount && (
+        <button className="increment-button" onClick={increment}>
           increment count
         </button>
       )}
-      <header>The count is {count}</header>
+      <p>
+        {count === -1 && 'counter is not yet read'}
+        {count !== -1 && 'The count is ' + count}
+      </p>
     </div>
   );
 }
