@@ -50,6 +50,11 @@ Add a .env with the following content
 MNEMONIC="hello world" # usually you would set this to your actual wallet mnemonic or you would add a PRIVATE_KEY with your wallets private key. We do not need to do this since we wont be deploying anywhere besides localnet
 ```
 
+### Run these commands in your terminal
+```bash
+source .env
+```
+
 ```bash
 yarn compile 
 
